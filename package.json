@@ -10,7 +10,9 @@
     "test:watch": "jest --watch",
     "test:ci": "jest --ci --reporters=default",
     "test:e2e": "playwright test",
-    "msw": "msw init public/ --save"
+    "msw": "msw init public/ --save",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

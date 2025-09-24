@@ -18,7 +18,10 @@ jest.mock('@/lib/axios', () => ({
 const mockedApi = api as unknown as {
   post: jest.Mock;
   get: jest.Mock;
-  interceptors: any;
+    interceptors: {
+    request: { use: jest.Mock };
+    response: { use: jest.Mock };
+  };
 };
 
 describe('LoginForm', () => {

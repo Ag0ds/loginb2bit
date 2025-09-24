@@ -38,11 +38,12 @@ test('login sucesso: salva tokens e redireciona para /profile', async ({ page })
   });
 
   await page.goto('/login');
-  await page.getByLabel(/e-mail/i).fill('cliente@youdrive.com');
-  await page.getByLabel(/senha/i).fill('password');
-  await page.getByRole('button', { name: /entrar/i }).click();
-
-  await expect(page).toHaveURL(/\/profile$/);
+  await page.waitForURL('**/login');
+  await page.waitForSelector('form');
+  await page.locator('input[name="email"]').fill('cliente@youdrive.com');
+  await page.locator('input[name="password"]').fill('password');
+  await page.locator('button[type="submit"]').click();
+  await page.waitForURL('**/profile');
   await expect(page.getByText(/Miguel\s+Rocha/i)).toBeVisible();
 
   const access = await page.evaluate(() => localStorage.getItem('access_token'));
@@ -64,10 +65,11 @@ test('login falha (400): mostra erro no campo e permanece em /login', async ({ p
   });
 
   await page.goto('/login');
-  await page.getByLabel(/e-mail/i).fill('foo@bar.com');
-  await page.getByLabel(/senha/i).fill('errada');
-  await page.getByRole('button', { name: /entrar/i }).click();
-
-  await expect(page).toHaveURL(/\/login$/);
+  await page.waitForURL('**/login');
+  await page.waitForSelector('form');
+  await page.locator('input[name="email"]').fill('foo@bar.com');
+  await page.locator('input[name="password"]').fill('errada');
+  await page.locator('button[type="submit"]').click();
+  await page.waitForURL('**/login');
   await expect(page.getByText(/este campo é obrigatório/i)).toBeVisible();
 });
