@@ -20,6 +20,12 @@ export default function ProfilePage() {
     window.location.href = '/login';
   };
 
+  const lastLoginText = (() => {
+    if (!data?.last_login) return '-';
+    const d = new Date(data.last_login);
+    return isNaN(d.getTime()) ? '-' : d.toLocaleString();
+  })();
+
   return (
     <main className="min-h-screen p-6 flex items-start justify-center">
       <div className="w-full max-w-xl">
@@ -37,18 +43,21 @@ export default function ProfilePage() {
                   {data.avatar?.image_low_url ? (
                     <AvatarImage src={data.avatar.image_low_url} alt="Avatar" />
                   ) : (
-                    <AvatarFallback>{data.name?.[0] ?? 'U'}</AvatarFallback>
+                    <AvatarFallback>{(data.name?.[0] || 'U').toUpperCase()}</AvatarFallback>
                   )}
                 </Avatar>
                 <div>
-                  <h1 className="text-xl font-semibold">{data.name} {data.last_name}</h1>
+                  <h1 className="text-xl font-semibold">
+                    {data.name} {data.last_name}
+                  </h1>
                   <p className="text-sm text-muted-foreground">{data.email}</p>
                 </div>
               </div>
+
               <div className="text-sm">
-                <p><b>Role:</b> {data.role.label}</p>
-                <p><b>Staff:</b> {data.staff_role.label}</p>
-                <p><b>Last login:</b> {new Date(data.last_login).toLocaleString()}</p>
+                <p><b>Role:</b> {data.role?.label ?? '-'}</p>
+                <p><b>Staff:</b> {data.staff_role?.label ?? '-'}</p>
+                <p><b>Last login:</b> {lastLoginText}</p>
               </div>
             </>
           )}
