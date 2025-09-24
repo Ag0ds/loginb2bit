@@ -6,16 +6,53 @@ on:
   pull_request:
     branches: [ main, master ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-      - run: npm ci
-      - run: npx playwright install --with-deps
-      - run: npm test
-      - run: npm run test:e2e
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Create .env.local
+        run: |
+          cat > .env.local << 'EOF'
+          NEXT_PUBLIC_API_BASE_URL=https://api.homologation.cliqdrive.com.br
+          NEXT_PUBLIC_API_ACCEPT=application/json;version=v1_web
+          NEXT_TELEMETRY_DISABLED=1
+          EOF
+
+      - name: Lint
+        run: npm run lint --if-present
+      - name: Build
+        run: npm run build
+
+      - name: Run unit/component tests (Jest)
+        run: npm test
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E (Playwright)
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          if-no-files-found: ignore
