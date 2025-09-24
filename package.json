@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --ci --reporters=default",
+    "test:e2e": "playwright test",
+    "msw": "msw init public/ --save"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
