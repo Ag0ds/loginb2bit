@@ -37,6 +37,14 @@ export default function LoginForm() {
         const { data } = await api.post<LoginResponse>('/auth/login/', values);
         setTokens(data.tokens.access, data.tokens.refresh);
         setUser(data.user);
+        await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            access: data.tokens.access,
+            refresh: data.tokens.refresh,
+          }),
+        });
         toast.success('Login realizado com sucesso!');
         router.replace('/profile');
       } catch (err: any) {

@@ -20,7 +20,10 @@ export default function ProfilePage() {
       .catch(() => setError('Falha ao carregar perfil.'));
   }, []);
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/session', { method: 'DELETE' });
+    } catch {}
     clearAuth();
     window.location.href = '/login';
   };
