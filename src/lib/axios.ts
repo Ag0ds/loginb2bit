@@ -24,17 +24,32 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (error) => {
-    const status = error?.response?.status;
+    if (!error?.response) {
+      toast.error('Sem conexão com o servidor.');
+      return Promise.reject(error);
+    }
+
+    const status = error.response.status;
+    const data = error.response.data;
+
     if (status === 401 || status === 403) {
       clearAuth();
       if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
         toast.error('Sessão expirada ou credenciais inválidas.');
         window.location.href = '/login';
       }
-    } else {
-      const msg = error?.response?.data?.detail || 'Falha na requisição.';
-      toast.error(String(msg));
+      return Promise.reject(error);
     }
+
+    if (status === 400) {
+      const hasFieldErrors = data && (data.email || data.password);
+      if (!hasFieldErrors) {
+        toast.error(String(data?.detail || 'Falha na requisição.'));
+      }
+      return Promise.reject(error);
+    }
+    const msg = data?.detail || 'Falha na requisição.';
+    toast.error(String(msg));
     return Promise.reject(error);
   }
 );
