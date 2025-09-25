@@ -13,6 +13,31 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
+type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
+
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v);
+
+const get = (obj: unknown, path: readonly string[]): unknown => {
+  let cur: unknown = obj;
+  for (const key of path) {
+    if (!isRecord(cur)) return undefined;
+    cur = cur[key];
+  }
+  return cur;
+};
+const first = (v: unknown): string | undefined =>
+  Array.isArray(v) ? (v.length ? String(v[0]) : undefined)
+  : typeof v === 'string' || typeof v === 'number' ? String(v)
+  : undefined;
+const extractErrorData = (err: unknown): unknown => {
+  const fromResponse = get(err, ['response', 'data']);
+  if (typeof fromResponse !== 'undefined') return fromResponse;
+  const fromTopData = get(err, ['data']);
+  if (typeof fromTopData !== 'undefined') return fromTopData;
+  return err;
+};
+
 type LoginRequest = { email: string; password: string };
 type LoginResponse = {
   tokens: { access: string; refresh: string };
@@ -51,35 +76,25 @@ export default function LoginForm() {
         toast.success('Login realizado com sucesso!');
         router.replace('/profile');
       } catch (err: unknown) {
-        // Tratamento *robusto* de erro (não depende de axios.isAxiosError)
-        const resp = (err as any)?.response;
-        const data = resp?.data ?? (err as any)?.data ?? (err as any) ?? {};
-
-        const first = (v: unknown): string | undefined =>
-          Array.isArray(v) ? String(v[0]) : (v != null ? String(v) : undefined);
-
+        const data = extractErrorData(err);
         const emailMsg =
-          first((data as any).email) ??
-          first((data as any).errors?.email) ??
-          first((data as any).error?.email);
-
+          first(get(data, ['email'])) ??
+          first(get(data, ['errors', 'email'])) ??
+          first(get(data, ['error', 'email']));
         const passwordMsg =
-          first((data as any).password) ??
-          first((data as any).errors?.password) ??
-          first((data as any).error?.password);
-
+          first(get(data, ['password'])) ??
+          first(get(data, ['errors', 'password'])) ??
+          first(get(data, ['error', 'password']));
         const nonFieldMsg =
-          (data as any).detail ??
-          first((data as any).non_field_errors) ??
-          (typeof (data as any).message === 'string' ? (data as any).message : undefined);
-
-        const anyStringInData =
+          first(get(data, ['detail'])) ??
+          first(get(data, ['non_field_errors'])) ??
+          first(get(data, ['message']));
+        const fallbackString =
           typeof data === 'string'
             ? data
-            : typeof (data as any).error === 'string'
-            ? (data as any).error
+            : (isRecord(data) && typeof data.error === 'string')
+            ? data.error
             : undefined;
-
         if (emailMsg) {
           helpers.setFieldError('email', emailMsg);
           helpers.setFieldTouched('email', true, false);
@@ -88,8 +103,8 @@ export default function LoginForm() {
           helpers.setFieldError('password', passwordMsg);
           helpers.setFieldTouched('password', true, false);
         }
-        if (!emailMsg && !passwordMsg && (nonFieldMsg ?? anyStringInData)) {
-          toast.error(nonFieldMsg ?? anyStringInData);
+        if (!emailMsg && !passwordMsg && (nonFieldMsg ?? fallbackString)) {
+          toast.error(nonFieldMsg ?? fallbackString);
         }
       } finally {
         helpers.setSubmitting(false);

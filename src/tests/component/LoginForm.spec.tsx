@@ -39,7 +39,7 @@ describe('LoginForm', () => {
     jest.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
       json: async () => ({ ok: true }),
-    } as any);
+    } as unknown as Response);
   });
 
   afterEach(() => {
