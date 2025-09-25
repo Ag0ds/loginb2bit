@@ -30,9 +30,9 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="bg-gray-800 text-white p-4">
+      <header className="bg-white text-white p-4">
         <div className="max-w-7xl mx-auto flex justify-end items-center">
-          <Button onClick={logout} className="bg-blue-900 hover:bg-blue-800 text-white px-6 py-2 rounded">
+          <Button onClick={logout} className="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded">
             Logout
           </Button>
         </div>
