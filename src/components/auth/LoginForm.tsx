@@ -110,6 +110,7 @@ export default function LoginForm() {
                 <Input
                   id="password"
                   name="password"
+                  type="password"
                   placeholder="****************"
                   value={values.password}
                   onChange={handleChange}
