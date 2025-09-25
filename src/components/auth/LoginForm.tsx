@@ -124,7 +124,7 @@ export default function LoginForm() {
                 ) : null}
               </div>
 
-              <Button type="submit" className="w-full h-12 bg-[#1e3a8a] hover:bg-[#1e40af] disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 mt-8" disabled={isSubmitting}>
+              <Button type="submit" className="w-full h-12 bg-[#022740] hover:bg-[#fdcf00] disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 mt-8" disabled={isSubmitting}>
                 {isSubmitting ? 'Entrando...' : 'Sing In'}
               </Button>
               </form>

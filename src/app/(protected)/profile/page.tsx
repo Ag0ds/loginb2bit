@@ -45,7 +45,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white text-white p-4">
         <div className="max-w-7xl mx-auto flex justify-end items-center">
-          <Button onClick={logout} className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 text-lg rounded">
+          <Button onClick={logout} className="bg-[#022740] hover:bg-[#fdcf00] text-white px-20 py-5 text-lg rounded">
             Logout
           </Button>
         </div>
@@ -56,7 +56,7 @@ export default function ProfilePage() {
           {!data && !error ? (
             <div className="space-y-6">
               <div className="text-center space-y-4">
-                <div className="text-sm text-gray-600 mb-2">Profile picture</div>
+                <div className="text-sm font-serif text-gray-600 mb-2">Profile picture</div>
                 <Skeleton className="h-16 w-16 rounded-lg mx-auto" />
               </div>
               <div className="space-y-4">
@@ -91,8 +91,8 @@ export default function ProfilePage() {
               <div className="space-y-4">
                 <div>
                   <div className="flex space-x-1 mb-1">
-                    <label className="text-sm text-gray-600 block mb-2">Your</label>
-                    <label className="text-sm font-bold text-gray-600 block mb-2">Name</label>
+                    <label className="text-sm font-serif text-gray-600 block mb-2">Your</label>
+                    <label className="text-sm font-serif font-bold text-gray-600 block mb-2">Name</label>
                   </div>
                   <div className="bg-gray-100 p-3 rounded text-gray-800">
                     {data!.name} {data!.last_name}
@@ -100,8 +100,8 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <div className="flex space-x-1 mb-1">
-                    <label className="text-sm text-gray-600 block mb-2">Your</label>
-                    <label className="text-sm font-bold text-gray-600 block mb-2">E-mail</label>
+                    <label className="text-sm font-serif text-gray-600 block mb-2">Your</label>
+                    <label className="text-sm font-serif font-bold text-gray-600 block mb-2">E-mail</label>
                   </div>
                   <div className="bg-gray-100 p-3 rounded text-gray-800">{data!.email}</div>
                 </div>
